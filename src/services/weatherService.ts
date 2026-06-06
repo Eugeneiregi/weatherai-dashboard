@@ -197,70 +197,37 @@ function normalizeForecast(raw: any, lat: number, lon: number): ForecastData {
   };
 }
 
-export async function getCurrentWeather(lat: number, lon: number, units: 'metric' | 'imperial' = 'metric', lang: string = 'en'): Promise<CurrentWeatherData> {
+
+//Kindly note I am Using this when I am running locally on my machine
+export async function getCurrentWeather(
+  lat: number,
+  lon: number,
+  units: 'metric' | 'imperial' = 'metric',
+  lang: string = 'en'
+): Promise<CurrentWeatherData> {
   if (USE_MOCK) {
     return getMockCurrentWeather(lat, lon, units);
   }
-
-  const url = `${API_BASE_URL}/current?lat=${lat}&lon=${lon}&ai=true&units=${units}&lang=${lang}`;
-
-  const res = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${API_KEY}`,
-    },
+  const { data } = await api.get('/v1/current', {
+    params: { lat, lon, ai: true, units, lang },
   });
-
-  const data = await res.json();
   return normalizeCurrent(data, lat, lon);
 }
 
 //Kindly note I am Using this when I am running locally on my machine
-// export async function getCurrentWeather(
-//   lat: number,
-//   lon: number,
-//   units: 'metric' | 'imperial' = 'metric',
-//   lang: string = 'en'
-// ): Promise<CurrentWeatherData> {
-//   if (USE_MOCK) {
-//     return getMockCurrentWeather(lat, lon, units);
-//   }
-//   const { data } = await api.get('/v1/current', {
-//     params: { lat, lon, ai: true, units, lang },
-//   });
-//   return normalizeCurrent(data, lat, lon);
-// }
-
-export async function getForecastWeather(lat: number, lon: number, days: number = 7, units: 'metric' | 'imperial' = 'metric', lang: string = 'en'): Promise<ForecastData> {
+export async function getForecastWeather(
+  lat: number,
+  lon: number,
+  days: number = 7,
+  units: 'metric' | 'imperial' = 'metric',
+  lang: string = 'en'
+): Promise<ForecastData> {
   if (USE_MOCK) {
     return getMockForecastWeather(lat, lon, units);
   }
-
-  const url = `${API_BASE_URL}/weather?lat=${lat}&lon=${lon}&days=${days}&ai=true&units=${units}&lang=${lang}`;
-
-  const res = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${API_KEY}`,
-    },
+  const { data } = await api.get('/v1/weather', {
+    params: { lat, lon, days, ai: true, units, lang },
   });
 
-  const data = await res.json();
   return normalizeForecast(data, lat, lon);
 }
-
-//Kindly note I am Using this when I am running locally on my machine
-// export async function getForecastWeather(
-//   lat: number,
-//   lon: number,
-//   days: number = 7,
-//   units: 'metric' | 'imperial' = 'metric',
-//   lang: string = 'en'
-// ): Promise<ForecastData> {
-//   if (USE_MOCK) {
-//     return getMockForecastWeather(lat, lon, units);
-//   }
-//   const { data } = await api.get('/v1/weather', {
-//     params: { lat, lon, days, ai: true, units, lang },
-//   });
-
-//   return normalizeForecast(data, lat, lon);
-// }
