@@ -2,11 +2,11 @@ import axios from 'axios';
 import { getMockCurrentWeather, getMockForecastWeather } from '../utils/mockData';
 
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY ?? '';
-// const USE_MOCK = true;
-const USE_MOCK =
-  !API_KEY ||
-  API_KEY === 'demo_api_key_12345' ||
-  API_KEY === '<your_real_key_here>';
+const USE_MOCK = true;
+// const USE_MOCK =
+//   !API_KEY ||
+//   API_KEY === 'demo_api_key_12345' ||
+//   API_KEY === '<your_real_key_here>';
 
 const API_BASE_URL = import.meta.env.VITE_WEATHER_API_BASE_URL ?? '';
 
