@@ -206,7 +206,10 @@ export async function getCurrentWeather(
   if (USE_MOCK) {
     return getMockCurrentWeather(lat, lon, units);
   }
-  const { data } = await api.get('/v1/current', {
+  // const { data } = await api.get('/v1/current', {
+  //   params: { lat, lon, ai: true, units, lang },
+  // });
+  const { data } = await api.get('/current', {
     params: { lat, lon, ai: true, units, lang },
   });
   return normalizeCurrent(data, lat, lon);
@@ -222,7 +225,10 @@ export async function getForecastWeather(
   if (USE_MOCK) {
     return getMockForecastWeather(lat, lon, units);
   }
-  const { data } = await api.get('/v1/weather', {
+  // const { data } = await api.get('/v1/weather', {
+  //   params: { lat, lon, days, ai: true, units, lang },
+  // });
+  const { data } = await api.get('/weather', {
     params: { lat, lon, days, ai: true, units, lang },
   });
   return normalizeForecast(data, lat, lon);
