@@ -2,11 +2,11 @@ import axios from 'axios';
 import { getMockCurrentWeather, getMockForecastWeather } from '../utils/mockData';
 
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY ?? '';
-
-const USE_MOCK =
-  !API_KEY ||
-  API_KEY === 'demo_api_key_12345' ||
-  API_KEY === '<your_real_key_here>';
+const USE_MOCK = true;
+// const USE_MOCK =
+//   !API_KEY ||
+//   API_KEY === 'demo_api_key_12345' ||
+//   API_KEY === '<your_real_key_here>';
 
 // In dev, requests to /v1/* are proxied to https://api.weather-ai.co by Vite
 // In production, we use the full base URL from env
