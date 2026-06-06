@@ -233,7 +233,7 @@ const Dashboard: React.FC = () => {
         <footer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-8">
           <div className="border-t border-slate-200 dark:border-slate-800 pt-6 text-center">
             <p className="text-xs text-slate-400 dark:text-slate-500">
-              WeatherAI Dashboard &mdash; Powered by WeatherAI API &bull; Built with React, Recharts &amp; Tailwind CSS
+              WeatherAI Dashboard &mdash; Powered by WeatherAI API &bull; Built with React, Recharts &amp; Tailwind CSS by Eugene Iregi
             </p>
           </div>
         </footer>
