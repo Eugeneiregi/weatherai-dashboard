@@ -62,13 +62,7 @@ const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2">
-            <button
-              onClick={onMenuToggle}
-              className="hidden lg:flex p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-300"
-              title="Menu"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
+            
 
             <button
               onClick={onRefresh}
@@ -103,6 +97,13 @@ const Navbar: React.FC<NavbarProps> = ({
               title="Toggle dark mode"
             >
               {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+            <button
+              onClick={onMenuToggle}
+              className="hidden lg:flex p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-300"
+              title="Menu"
+            >
+              <Menu className="w-5 h-5" />
             </button>
           </div>
         </div>
