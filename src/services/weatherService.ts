@@ -2,15 +2,16 @@ import axios from 'axios';
 import { getMockCurrentWeather, getMockForecastWeather } from '../utils/mockData';
 
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY ?? '';
+
 // const USE_MOCK = true;
 const USE_MOCK =
   !API_KEY ||
   API_KEY === 'demo_api_key_12345' ||
-  API_KEY === '1234567890abcdef1234567890abcdef' ||
+  API_KEY === 'dummy12345' ||
   API_KEY;
 
-  const API_BASE_URL = '/api';
-// const API_BASE_URL = import.meta.env.VITE_WEATHER_API_BASE_URL ?? '';
+  // const API_BASE_URL = '/api';
+const API_BASE_URL = import.meta.env.VITE_WEATHER_API_BASE_URL ?? '';
 
 // In dev, requests to /v1/* are proxied to https://api.weather-ai.co by Vite
 // In production, we use the full base URL from env
@@ -254,6 +255,9 @@ export async function getCurrentWeather(
 //   return normalizeForecast(data, lat, lon);
 // }
 //Kindly note I am Using this when I am running locally on my machine
+
+console.log('Using API Key:', "Ya Mwisho")
+
 export async function getForecastWeather(
   lat: number,
   lon: number,
