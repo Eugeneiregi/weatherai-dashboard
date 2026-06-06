@@ -1,8 +1,12 @@
 import axios from 'axios';
 import { getMockCurrentWeather, getMockForecastWeather } from '../utils/mockData';
 
-const API_KEY = import.meta.env.VITE_WEATHER_API_KEY || '';
-const USE_MOCK = !API_KEY || API_KEY === 'demo_api_key_12345' || API_KEY === '<your_real_key_here>';
+const API_KEY = import.meta.env.VITE_WEATHER_API_KEY ?? '';
+
+const USE_MOCK =
+  !API_KEY ||
+  API_KEY === 'demo_api_key_12345' ||
+  API_KEY === '<your_real_key_here>';
 
 // In dev, requests to /v1/* are proxied to https://api.weather-ai.co by Vite
 // In production, we use the full base URL from env
@@ -13,9 +17,20 @@ const api = axios.create({
   timeout: 15000,
   headers: {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${API_KEY}`,
+    ...(USE_MOCK ? {} : {
+      Authorization: `Bearer ${API_KEY}`,
+    }),
   },
 });
+
+// const api = axios.create({
+//   baseURL: API_BASE_URL,
+//   timeout: 15000,
+//   headers: {
+//     'Content-Type': 'application/json',
+//     Authorization: `Bearer ${API_KEY}`,
+//   },
+// });
 
 api.interceptors.response.use(
   (response) => response,
