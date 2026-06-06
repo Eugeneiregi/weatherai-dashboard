@@ -2,11 +2,12 @@ import axios from 'axios';
 import { getMockCurrentWeather, getMockForecastWeather } from '../utils/mockData';
 
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY ?? '';
-const USE_MOCK = true;
-// const USE_MOCK =
-//   !API_KEY ||
-//   API_KEY === 'demo_api_key_12345' ||
-//   API_KEY === '<your_real_key_here>';
+// const USE_MOCK = true;
+const USE_MOCK =
+  !API_KEY ||
+  API_KEY === 'demo_api_key_12345' ||
+  API_KEY === '1234567890abcdef1234567890abcdef' ||
+  API_KEY;
 
 const API_BASE_URL = import.meta.env.VITE_WEATHER_API_BASE_URL ?? '';
 
@@ -47,7 +48,7 @@ api.interceptors.response.use(
       return Promise.reject(new Error('Invalid request parameters. Check latitude and longitude.'));
     }
     if (!error.response) {
-      return Promise.reject(new Error('Network error. Please check your connection.'));
+      return Promise.reject(new Error('Network error. Server rejected because of CORS.'));
     }
     return Promise.reject(new Error(error.response.data?.error || error.response.data?.message || 'Something went wrong.'));
   }
