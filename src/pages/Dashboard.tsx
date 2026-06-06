@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Navbar from '../components/Navbar';
+import Sidebar from '../components/Sidebar';
 import CurrentWeather from '../components/CurrentWeather';
 import WeatherStats from '../components/WeatherStats';
 import HourlyForecast from '../components/HourlyForecast';
@@ -32,8 +33,11 @@ const Dashboard: React.FC = () => {
   const [coords, setCoords] = useState({ lat: DEFAULT_LAT, lon: DEFAULT_LON });
   const [geoRequested, setGeoRequested] = useState(false);
   const [favorites, setFavorites] = useState<string[]>(() => getStoredValue('favoriteCities', []));
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('current');
 
   const { current, forecast, loading, error, fetchWeather, refresh } = useWeather(units, lang);
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   useEffect(() => {
     localStorage.setItem('darkMode', JSON.stringify(darkMode));
@@ -44,23 +48,13 @@ const Dashboard: React.FC = () => {
     }
   }, [darkMode]);
 
-  useEffect(() => {
-    localStorage.setItem('units', JSON.stringify(units));
-  }, [units]);
+  useEffect(() => { localStorage.setItem('units', JSON.stringify(units)); }, [units]);
+  useEffect(() => { localStorage.setItem('lang', JSON.stringify(lang)); }, [lang]);
+  useEffect(() => { localStorage.setItem('favoriteCities', JSON.stringify(favorites)); }, [favorites]);
 
-  useEffect(() => {
-    localStorage.setItem('lang', JSON.stringify(lang));
-  }, [lang]);
-
-  useEffect(() => {
-    localStorage.setItem('favoriteCities', JSON.stringify(favorites));
-  }, [favorites]);
-
-  // Geolocation on first load
   useEffect(() => {
     if (geoRequested) return;
     setGeoRequested(true);
-
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -69,9 +63,7 @@ const Dashboard: React.FC = () => {
           setCurrentCity('');
           fetchWeather(latitude, longitude);
         },
-        () => {
-          fetchWeather(DEFAULT_LAT, DEFAULT_LON);
-        }
+        () => fetchWeather(DEFAULT_LAT, DEFAULT_LON)
       );
     } else {
       fetchWeather(DEFAULT_LAT, DEFAULT_LON);
@@ -103,9 +95,41 @@ const Dashboard: React.FC = () => {
     );
   }, []);
 
+  const handleNavigate = useCallback((section: string) => {
+    setActiveSection(section);
+    const el = sectionRefs.current[section];
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, []);
+
+  // Intersection observer for active section tracking
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: '-20% 0px -70% 0px' }
+    );
+
+    Object.values(sectionRefs.current).forEach((el) => {
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [current]);
+
   const weatherCode = current?.current?.weather_code ?? 0;
   const isDay = current?.current?.is_day ?? true;
   const bgGradient = getWeatherBackground(weatherCode, isDay);
+
+  const setSectionRef = (id: string) => (el: HTMLDivElement | null) => {
+    sectionRefs.current[id] = el;
+  };
 
   return (
     <div className={`min-h-screen bg-gradient-to-br ${bgGradient} dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 transition-all duration-700`}>
@@ -123,6 +147,26 @@ const Dashboard: React.FC = () => {
           onToggleFavorite={toggleFavorite}
           currentCity={currentCity}
           loading={loading}
+          onMenuToggle={() => setSidebarOpen(true)}
+        />
+
+        <Sidebar
+          open={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+          darkMode={darkMode}
+          onToggleDark={toggleDark}
+          units={units}
+          onToggleUnits={toggleUnits}
+          lang={lang}
+          onToggleLang={toggleLang}
+          onRefresh={refresh}
+          loading={loading}
+          currentCity={currentCity}
+          favorites={favorites}
+          onToggleFavorite={toggleFavorite}
+          onSelectCity={handleSelectCity}
+          activeSection={activeSection}
+          onNavigate={handleNavigate}
         />
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
@@ -132,22 +176,25 @@ const Dashboard: React.FC = () => {
 
           {current && (
             <>
-              <CurrentWeather
-                data={current}
-                units={units}
-                cityName={currentCity}
-              />
+              <div id="current" ref={setSectionRef('current')}>
+                <CurrentWeather
+                  data={current}
+                  units={units}
+                  cityName={currentCity}
+                  onUnitToggle={toggleUnits}
+                />
+              </div>
 
               <WeatherStats data={current} units={units} />
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div id="hourly" ref={setSectionRef('hourly')} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2">
                   <HourlyForecast
                     data={forecast?.hourly ?? []}
                     units={units}
                   />
                 </div>
-                <div>
+                <div id="location" ref={setSectionRef('location')}>
                   <LocationCard
                     lat={current.location.lat}
                     lon={current.location.lon}
@@ -158,14 +205,20 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
 
-              <WeatherChart data={forecast?.hourly ?? []} units={units} />
+              <div id="chart" ref={setSectionRef('chart')}>
+                <WeatherChart data={forecast?.hourly ?? []} units={units} />
+              </div>
 
-              <ForecastCards data={forecast?.daily ?? []} units={units} />
+              <div id="forecast" ref={setSectionRef('forecast')}>
+                <ForecastCards data={forecast?.daily ?? []} units={units} />
+              </div>
 
-              <AISummary
-                summary={current.ai_summary || forecast?.ai_summary}
-                current={current}
-              />
+              <div id="ai" ref={setSectionRef('ai')}>
+                <AISummary
+                  summary={current.ai_summary || forecast?.ai_summary}
+                  current={current}
+                />
+              </div>
             </>
           )}
 

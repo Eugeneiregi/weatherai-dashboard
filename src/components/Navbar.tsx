@@ -1,5 +1,5 @@
 import React from 'react';
-import { CloudSun, Moon, Sun, RefreshCw, Thermometer, Globe } from 'lucide-react';
+import { CloudSun, Moon, Sun, RefreshCw, Thermometer, Globe, Menu } from 'lucide-react';
 import SearchBar from './SearchBar';
 
 interface NavbarProps {
@@ -15,6 +15,7 @@ interface NavbarProps {
   onToggleFavorite: (name: string) => void;
   currentCity?: string;
   loading?: boolean;
+  onMenuToggle: () => void;
 }
 
 const Navbar: React.FC<NavbarProps> = ({
@@ -30,12 +31,19 @@ const Navbar: React.FC<NavbarProps> = ({
   onToggleFavorite,
   currentCity,
   loading,
+  onMenuToggle,
 }) => {
   return (
-    <nav className="sticky top-0 z-40 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-700/50">
+    <nav className="sticky top-0 z-30 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-700/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-3">
+            <button
+              onClick={onMenuToggle}
+              className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-300 lg:hidden"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
             <div className="flex items-center gap-2">
               <CloudSun className="w-8 h-8 text-primary-500" />
               <span className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">
@@ -54,6 +62,14 @@ const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2">
+            <button
+              onClick={onMenuToggle}
+              className="hidden lg:flex p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-300"
+              title="Menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+
             <button
               onClick={onRefresh}
               disabled={loading}
