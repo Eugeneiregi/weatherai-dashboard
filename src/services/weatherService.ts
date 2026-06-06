@@ -227,7 +227,7 @@ export async function getCurrentWeather(
 //   });
 //   return normalizeCurrent(data, lat, lon);
 // }
-
+//
 export async function getForecastWeather(
   lat: number,
   lon: number,
