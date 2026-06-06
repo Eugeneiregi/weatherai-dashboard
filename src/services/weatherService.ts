@@ -11,11 +11,8 @@ const USE_MOCK =
   API_KEY;
 
   // const API_BASE_URL = '/api';
-const API_BASE_URL = import.meta.env.VITE_WEATHER_API_BASE_URL ?? '';
+const API_BASE_URL = import.meta.env.VITE_WEATHER_API_BASE_URL ?? '/api';
 
-// In dev, requests to /v1/* are proxied to https://api.weather-ai.co by Vite
-// In production, we use the full base URL from env
-// const API_BASE_URL = import.meta.env.DEV ? '' : (import.meta.env.VITE_WEATHER_API_BASE_URL || 'https://api.weather-ai.co');
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -193,28 +190,6 @@ function normalizeForecast(raw: any, lat: number, lon: number): ForecastData {
   };
 }
 
-// export async function getCurrentWeather(
-//   lat: number,
-//   lon: number,
-//   units: 'metric' | 'imperial' = 'metric',
-//   lang: string = 'en'
-// ): Promise<CurrentWeatherData> {
-//   if (USE_MOCK) {
-//     return getMockCurrentWeather(lat, lon, units);
-//   }
-
-//   const res = await fetch(
-//     `https://api.weather-ai.co/current?lat=${lat}&lon=${lon}&ai=true&units=${units}&lang=${lang}`,
-//     {
-//       headers: {
-//         Authorization: `Bearer ${API_KEY}`,
-//       },
-//     }
-//   );
-
-//   const data = await res.json();
-//   return normalizeCurrent(data, lat, lon);
-// }
 //Kindly note I am Using this when I am running locally on my machine
 export async function getCurrentWeather(
   lat: number,
@@ -230,30 +205,7 @@ export async function getCurrentWeather(
   });
   return normalizeCurrent(data, lat, lon);
 }
-//
-// export async function getForecastWeather(
-//   lat: number,
-//   lon: number,
-//   days: number = 7,
-//   units: 'metric' | 'imperial' = 'metric',
-//   lang: string = 'en'
-// ): Promise<ForecastData> {
-//   if (USE_MOCK) {
-//     return getMockForecastWeather(lat, lon, units);
-//   }
 
-//   const res = await fetch(
-//     `https://api.weather-ai.co/weather?lat=${lat}&lon=${lon}&days=${days}&ai=true&units=${units}&lang=${lang}`,
-//     {
-//       headers: {
-//         Authorization: `Bearer ${API_KEY}`,
-//       },
-//     }
-//   );
-
-//   const data = await res.json();
-//   return normalizeForecast(data, lat, lon);
-// }
 //Kindly note I am Using this when I am running locally on my machine
 
 console.log('Using API Key:', "Ya Mwisho")
